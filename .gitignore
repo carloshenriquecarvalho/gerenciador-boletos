@@ -1,14 +1,3 @@
-Excelente pergunta. Um .gitignore bem feito é a primeira linha de defesa para um repositório limpo e seguro. Não se trata apenas de ignorar arquivos, mas de entender o que deve ser compartilhado e o que é lixo de ambiente.
-
-A regra de ouro é: Nunca versione (commite) nada que possa ser gerado automaticamente ou que seja específico da sua máquina local.
-
-Aqui está o que eu considero um .gitignore robusto e profissional para um projeto PHP moderno. Ele já prevê o seu crescimento como desenvolvedor. Abaixo do código, vou explicar cada seção, que é a parte mais importante.
-
-O Arquivo .gitignore Ideal para Seu Projeto
-Crie um arquivo chamado .gitignore (exatamente assim, com o ponto no início) na raiz do seu projeto gerenciador-boletos e cole o seguinte conteúdo dentro dele:
-
-Snippet de código
-
 # -----------------------------------------------------------------------------
 # 1. DEPENDÊNCIAS (GERENCIADAS PELO COMPOSER)
 # -----------------------------------------------------------------------------
