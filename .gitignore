@@ -1,0 +1,66 @@
+Excelente pergunta. Um .gitignore bem feito é a primeira linha de defesa para um repositório limpo e seguro. Não se trata apenas de ignorar arquivos, mas de entender o que deve ser compartilhado e o que é lixo de ambiente.
+
+A regra de ouro é: Nunca versione (commite) nada que possa ser gerado automaticamente ou que seja específico da sua máquina local.
+
+Aqui está o que eu considero um .gitignore robusto e profissional para um projeto PHP moderno. Ele já prevê o seu crescimento como desenvolvedor. Abaixo do código, vou explicar cada seção, que é a parte mais importante.
+
+O Arquivo .gitignore Ideal para Seu Projeto
+Crie um arquivo chamado .gitignore (exatamente assim, com o ponto no início) na raiz do seu projeto gerenciador-boletos e cole o seguinte conteúdo dentro dele:
+
+Snippet de código
+
+# -----------------------------------------------------------------------------
+# 1. DEPENDÊNCIAS (GERENCIADAS PELO COMPOSER)
+# -----------------------------------------------------------------------------
+# Nunca versione o código de bibliotecas de terceiros. 
+# O arquivo composer.lock garante que todos usem as mesmas versões.
+/vendor/
+composer.lock
+
+# -----------------------------------------------------------------------------
+# 2. CONFIGURAÇÃO E SEGURANÇA (O MAIS IMPORTANTE!)
+# -----------------------------------------------------------------------------
+# O arquivo .env contém senhas de banco de dados, chaves de API, etc.
+# NUNCA deve ir para o repositório.
+.env
+.env.local
+.env.*.local
+
+# Um arquivo de exemplo DEVE ser versionado para que outros saibam quais
+# variáveis são necessárias.
+!.env.example
+
+# -----------------------------------------------------------------------------
+# 3. LOGS E ARQUIVOS TEMPORÁRIOS
+# -----------------------------------------------------------------------------
+# Logs são específicos do ambiente e podem conter dados sensíveis.
+*.log
+/logs/
+/tmp/
+
+# -----------------------------------------------------------------------------
+# 4. UPLOADS DE USUÁRIOS
+# -----------------------------------------------------------------------------
+# Pasta onde você salvará os PDFs dos boletos. 
+# Os arquivos do projeto não devem se misturar com os dados dos usuários.
+/uploads/
+
+# -----------------------------------------------------------------------------
+# 5. ARQUIVOS DE IDE E EDITORES
+# -----------------------------------------------------------------------------
+# Configurações específicas da sua máquina que não interessam a outros devs.
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# -----------------------------------------------------------------------------
+# 6. ARQUIVOS GERADOS PELO SISTEMA OPERACIONAL
+# -----------------------------------------------------------------------------
+# Lixo gerado por macOS, Windows e Linux.
+.DS_Store
+Thumbs.db
+desktop.ini
+._*
+.Spotlight-V100
+.Trashes
