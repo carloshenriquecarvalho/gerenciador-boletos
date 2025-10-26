@@ -13,3 +13,9 @@ include_once '../src/includes/header_generic.php';
             <button type="submit" class="login-button">Entrar</button>
         </fieldset>
     </form>
+
+
+    <?php
+    include_once '../src/includes/footer_generic.php';
+    
+    ?>

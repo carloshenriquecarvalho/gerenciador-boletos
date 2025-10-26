@@ -6,4 +6,7 @@
     <title><?= isset($titulo) ? htmlspecialchars($titulo) : 'Titulo padrao' ?></title>
 </head>
 <body>
+    <header>
+        <nav><p><a href="../src/actions/logout.php">Sair</a></p></nav>
+    </header>
     <main>
