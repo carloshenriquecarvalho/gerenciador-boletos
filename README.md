@@ -1,13 +1,11 @@
 ### Exemplo: Script de Processamento de Registro (`src/actions/processa_registro.php`)
 
-Este script recebe os dados do formulário de registro via POST, valida as informações, cria o hash da senha e insere o novo usuário no banco de dados usando PDO com Prepared Statements para segurança.
-
 ```php
 <?php
 
-// verifica se o método é POST 
+// verify if the method is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    // Se não for POST, nega o acesso ou redireciona
+    // If not POST, access denied and redirected
     error_log("Tentativa de acesso GET a processa_registro.php");
     header("Location: ../../public/registro.php"); 
     exit();
@@ -31,30 +29,30 @@ if (empty($nome) || empty($email) || empty($senha_texto_puro) || empty($re_senha
     error_log("Erro [Registro]: As senhas não coincidem.");
     die("Erro: As senhas devem ser iguais!");
 } else {
-    // hashear senha validada
+    // hashs validated pass
     $senha_hash = password_hash($senha_texto_puro, PASSWORD_DEFAULT);
 
     try {
-        // Checa os nomes das colunas
+        // checks the columns name
         $sql = "INSERT INTO usuario (nome_usuario, email, senha_hash) VALUES (?, ?, ?)";
         $stmt = $pdo->prepare($sql);
 
         $stmt->execute([$nome, $email, $senha_hash]);
 
-        // Sucesso! Redireciona para o login
+        // redirects to login page
         header("Location: ../../public/login.php");
         exit();
 
     } catch (PDOException $e) {
-        if ($e->getCode() === '23000') { // Código de violação de constraint (UNIQUE)
+        if ($e->getCode() === '23000') { // constraint unique violation
             error_log("Erro [Registro]: Email duplicado - " . $email);
             die("Erro: este e-mail já está cadastrado.");
         } else {
-            // Outro erro qualquer de banco de dados
+            // any other database error
             error_log("Erro [Registro] DB: " . $e->getMessage());
             die("Erro ao processar o cadastro. Tente novamente mais tarde.");
         }
     }
-} // Fim do else principal
+} // Main else end
 
 ?>

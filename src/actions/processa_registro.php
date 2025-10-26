@@ -19,7 +19,7 @@ if (empty($nome) || empty($email) || empty($senha_texto_puro) || empty($re_senha
     die("preencha todos os campos e tente novamente mais tarde!");
 
 } elseif ($senha_texto_puro !== $re_senha) {
-    error_log("Erro: as senhas nao batem");
+    error_log("Erro: as senhas devem ser iguais");
 
     die("As senhas devem ser iguais");
 } else {
