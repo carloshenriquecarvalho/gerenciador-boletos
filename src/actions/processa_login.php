@@ -4,8 +4,6 @@ session_start();
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     error_log("Metodo de request nao e post");
     header("Location: ../../public/login.php");
-    die("Tentativa de entrada via GET");
-
     exit;
 }
 
@@ -38,7 +36,7 @@ try {
         $_SESSION['user_name'] = $usuario['nome_usuario'];
         $_SESSION['logged_in'] = true;
 
-        header("Location: ../../public/sucesso.php");
+        header("Location: ../../public/dashboard.php");
         exit;
     } else {
         error_log("Falha na tentativa de login para o e-mail: $email");
@@ -48,7 +46,7 @@ try {
 
 } catch (PDOException $e) {
     error_log("Erro na consulta de login: " . $e->getMessage());
-    header('Location: ../../public/login.php?error=db_query_error');
+    header('Location: ../../public/login.php?erro=db_query_error');
     exit;
 }
 ?>
