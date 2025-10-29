@@ -157,4 +157,4 @@ JSON
 {
   "status": "sucesso",
   "mensagem": "Logout efetuado com sucesso!"
-}```
+}
