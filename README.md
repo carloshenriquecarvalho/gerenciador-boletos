@@ -104,56 +104,45 @@ Registers a new user.
   "email": "test@example.com",
   "password": "a-strong-password-123"
 }
+
 Success Response (200 OK):
-
-JSON
-
 {
   "status": "sucesso",
   "mensagem": "Usuário registrado com sucesso!"
 }
+
 Error Response (e.g., duplicate email):
-
-JSON
-
 {
   "status": "erro",
   "mensagem": "O email já está sendo usado!"
 }
+
 POST /api/login.php
 Logs in an existing user and starts a session.
 
 Request Body (JSON):
-
-JSON
-
 {
   "email": "test@example.com",
   "password": "a-strong-password-123"
 }
+
 Success Response (200 OK):
-
-JSON
-
 {
   "status": "sucesso",
   "mensagem": "Login efetuado com sucesso!"
 }
+
 Error Response (e.g., wrong credentials):
-
-JSON
-
 {
   "status": "erro",
   "mensagem": "Email ou senha inválidos."
 }
+
+
 GET /api/logout.php
 Logs out the currently signed-in user by destroying the session.
 
 Success Response (200 OK):
-
-JSON
-
 {
   "status": "sucesso",
   "mensagem": "Logout efetuado com sucesso!"
