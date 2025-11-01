@@ -14,7 +14,7 @@ composer.lock
 .env
 .env.local
 .env.*.local
-.ini
+settings.ini
 
 !.env.example
 
