@@ -14,39 +14,24 @@ composer.lock
 .env
 .env.local
 .env.*.local
+.ini
 
-# Um arquivo de exemplo DEVE ser versionado para que outros saibam quais
-# variáveis são necessárias.
 !.env.example
 
-# -----------------------------------------------------------------------------
-# 3. LOGS E ARQUIVOS TEMPORÁRIOS
-# -----------------------------------------------------------------------------
-# Logs são específicos do ambiente e podem conter dados sensíveis.
+
 *.log
 /logs/
 /tmp/
 
-# -----------------------------------------------------------------------------
-# 4. UPLOADS DE USUÁRIOS
-# -----------------------------------------------------------------------------
-# Pasta onde você salvará os PDFs dos boletos. 
-# Os arquivos do projeto não devem se misturar com os dados dos usuários.
+
 /uploads/
 
-# -----------------------------------------------------------------------------
-# 5. ARQUIVOS DE IDE E EDITORES
-# -----------------------------------------------------------------------------
-# Configurações específicas da sua máquina que não interessam a outros devs.
 .vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
 
-# -----------------------------------------------------------------------------
-# 6. ARQUIVOS GERADOS PELO SISTEMA OPERACIONAL
-# -----------------------------------------------------------------------------
-# Lixo gerado por macOS, Windows e Linux.
+
 .DS_Store
 Thumbs.db
 desktop.ini
