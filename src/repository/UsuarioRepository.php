@@ -5,7 +5,7 @@ class UsuarioRepository
 {
     private const SQL_REGISTER = 'insert into gerenciador_boletos.usuario(nome_usuario, email, senha_hash) values(?, ?, ?)';
     private const SQL_SELECT_BY_EMAIL = 'select * from gerenciador_boletos.usuario where email = ?';
-    private const SQL_DELETE_USER_BY_ID = 'delete * from gerenciador_boletos.usuario where id_usuario = ?';
+    private const SQL_DELETE_USER_BY_ID = 'delete from gerenciador_boletos.usuario where id_usuario = ?';
 
     private ?PDO $pdo;
 
@@ -15,7 +15,6 @@ class UsuarioRepository
 
     public function registrar(string $nome_usuario, string $email, string $senha) 
     {
-
         $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
 
         try{
@@ -31,7 +30,6 @@ class UsuarioRepository
             throw $e;
         }
     }
-
 
     public function login(string $email, string $senha)
     {
@@ -55,19 +53,17 @@ class UsuarioRepository
         }
     }
 
-    public function deletar(int $id)
+    public function deletar(int  $id)
     {
         try {
-            $stmt = $this->pdo->prepare(self::SQL_DELETE_USER_BY_ID);
-            $stmt->execute([$id]);
-            return $stmt->rowCount() > 0;
+            $stmt_delete = $this->pdo->prepare(self::SQL_DELETE_USER_BY_ID);
+            $stmt_delete->execute([$id]);
+
+            return $stmt_delete->rowCount() > 0;
         } catch (PDOException $e) {
             error_log("Nao foi possivel deletar o usuario com o ID: {$id}. Tente novamente mais tarde.");
             return false;
         }
     }
-
-
 }
-
 ?>

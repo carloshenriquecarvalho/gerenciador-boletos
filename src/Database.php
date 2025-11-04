@@ -17,7 +17,7 @@ class Database
         if (!$settings = parse_ini_file($config_path, TRUE)) {
             throw new Exception('Unable to open file: ' . $config_path . '.');
         }
-        
+
         $db = $settings['database'];
 
         $this->driver = $db['driver'];
@@ -30,10 +30,6 @@ class Database
 
     public function getConnection(): ?PDO
     {
-        
-
-        
-
         if ($this->conn === null) {
             $dsn = "{$this->driver}:host={$this->host};dbname={$this->db_name};charset={$this->charset}";
 
@@ -51,10 +47,6 @@ class Database
             }
         }
         return $this->conn;
-
     }
 }
-
-
-
 ?>

@@ -1,16 +1,5 @@
-# -----------------------------------------------------------------------------
-# 1. DEPENDÊNCIAS (GERENCIADAS PELO COMPOSER)
-# -----------------------------------------------------------------------------
-# Nunca versione o código de bibliotecas de terceiros. 
-# O arquivo composer.lock garante que todos usem as mesmas versões.
 /vendor/
 composer.lock
-
-# -----------------------------------------------------------------------------
-# 2. CONFIGURAÇÃO E SEGURANÇA (O MAIS IMPORTANTE!)
-# -----------------------------------------------------------------------------
-# O arquivo .env contém senhas de banco de dados, chaves de API, etc.
-# NUNCA deve ir para o repositório.
 .env
 .env.local
 .env.*.local

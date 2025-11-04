@@ -12,5 +12,5 @@ $pdo = $db->getConnection();
 $repo = new UsuarioRepository($pdo);
 $controller = new UsuarioController($repo);
 
-$controller->handleRegistroRequest();
+$controller->handleDeleteRequest();
 ?>
