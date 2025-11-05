@@ -41,6 +41,7 @@ class Database
 
             try {
                 $this->conn = new PDO($dsn, $this->username, $this->password, $options);
+                // echo "It worked!";
             } catch (PDOException $e){
                 error_log("Erro de conexao com o bd: " . $e->getMessage());
                 die("Erro ao conectar com o banco de dados. Tente novamente mais tarde.");

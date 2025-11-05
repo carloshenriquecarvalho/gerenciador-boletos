@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../src/controller/UsuarioController.php';
 $db = new Database();
 $pdo = $db->getConnection();
 $repo = new UsuarioRepository($pdo);
-$controller = new UsuarioController($repo);
+$controller = new UsuarioControl($repo);
 
 $controller->handleRegistroRequest();
 ?>
