@@ -1,0 +1,1 @@
+{"version":2,"defects":{"test\\UserRepositoryTest::updatePasswordWithValidCredentials":7,"test\\UserRepositoryTest::updatePasswordWithInvalidOldPassword":8},"times":{"test\\UserRepositoryTest::updatePasswordWithValidCredentials":0.001,"test\\UserRepositoryTest::updatePasswordWithInvalidOldPassword":0}}
