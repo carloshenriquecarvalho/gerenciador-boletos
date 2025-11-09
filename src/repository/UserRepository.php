@@ -18,7 +18,7 @@ class UserRepository
     private const string SQL_SELECT_USER_FROM_TABLE_ID = 'SELECT * FROM usuario WHERE id_usuario = :id_usuario';
     private const string SQL_UPDATE_NAME = 'UPDATE usuario SET nome_usuario = :nome_usuario WHERE id_usuario = :id_usuario';
     private const string SQL_UPDATE_EMAIL = 'UPDATE usuario SET email = :email WHERE email = :oldEmail';
-    private const string SQL_UPDATE_PASSWORD = 'UPDATE usuario SET senha_hash = :password_hash WHERE email = :email';
+    private const string SQL_UPDATE_PASSWORD = 'UPDATE usuario SET senha_hash = :password_hash WHERE id_usuario = :id_usuario';
     private const string SQL_DELETE_USER_FROM_TABLE = 'DELETE FROM usuario WHERE id_usuario = :id_usuario';
 
     //register
@@ -103,18 +103,18 @@ class UserRepository
 
     //update password
     public function updatePassword
-    (string $email, string $password, string $oldPassword): bool
+    (int $id, string $password, string $oldPassword): bool
     {
-        $stmt = $this->conn->prepare(self::SQL_SELECT_USER_FROM_TABLE);
+        $stmt = $this->conn->prepare(self::SQL_SELECT_USER_FROM_TABLE_ID);
 
         try {
-            $stmt->execute([':email' => $email]);
+            $stmt->execute([':id_usuario' => $id]);
             $data = $stmt->fetch();
             if ($data) {
                 if (password_verify($oldPassword, $data['senha_hash'])) {
                     $new_password_hash = password_hash($password, PASSWORD_DEFAULT);
                     $stmt_update = $this->conn->prepare(self::SQL_UPDATE_PASSWORD);
-                    $stmt_update->execute([':password_hash' => $new_password_hash, ':email' => $email]);
+                    $stmt_update->execute([':password_hash' => $new_password_hash, ':id_usuario' => $id]);
                     return true;
                 }
                 return false;
@@ -127,7 +127,7 @@ class UserRepository
     }
 
     //delete account
-    public function delete(string $id_usuario): bool
+    public function delete(int $id_usuario): bool
     {
         $stmt = $this->conn->prepare(self::SQL_DELETE_USER_FROM_TABLE);
         try {
