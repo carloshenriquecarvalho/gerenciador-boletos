@@ -1,7 +1,8 @@
 <?php
-
 namespace App\controller;
 use App\repository\UserRepository;
+use App\model\User;
+use PDOException;
 
 class UserController
 {
@@ -10,15 +11,19 @@ class UserController
     {
         $this->repo = $repo;
     }
+    
     public function handleRegisterRequest(): void
     {
         header('Content-Type: application/json');
+
         $data = json_decode(file_get_contents("php://input"), true);
+
         if (!$data || empty($data['name']) || empty($data['email']) || empty($data['password'])) {
-            http_response_code(400);
-            echo json_encode(['status' => 'invalid_input']);
+            http_response_code(400); // 400 Bad Request
+            echo json_encode(['status' => 'invalid_input', 'mensagem' => 'Nome, email e senha são obrigatórios.']);
             exit;
         }
+
         $name = trim($data['name']);
         $email = trim($data['email']);
         $password = $data['password'];
@@ -27,29 +32,29 @@ class UserController
             $success = $this->repo->register($name, $email, $password);
 
             if ($success) {
-                http_response_code(201);
-                echo json_encode(['status' => 'success']);
+                http_response_code(201); 
+                echo json_encode(['status' => 'success', 'mensagem' => 'Usuário registrado com sucesso.']);
             } else {
-                http_response_code(409);
-                echo json_encode(['status' => 'duplicate_or_error']);
+                http_response_code(409); 
+                echo json_encode(['status' => 'duplicate_or_error', 'mensagem' => 'Este e-mail já está em uso.']);
             }
-        } catch (\Throwable $e) {
+        } catch (PDOException $e) {
             error_log("Register error: " . $e->getMessage());
             http_response_code(500);
-            echo json_encode(['status' => 'fail']);
+            echo json_encode(['status' => 'fail', 'mensagem' => 'Erro interno do servidor.']);
         }
         exit;
     }
-
+    
     public function handleLoginRequest(): void
     {
         header('Content-Type: application/json');
 
-        // Decode input safely
+        // 1. Read Request
         $data = json_decode(file_get_contents("php://input"), true);
         if (!$data || empty($data['email']) || empty($data['password'])) {
             http_response_code(400);
-            echo json_encode(['status' => 'invalid_input']);
+            echo json_encode(['status' => 'invalid_input', 'mensagem' => 'Email e senha são obrigatórios.']);
             exit;
         }
 
@@ -59,10 +64,14 @@ class UserController
         try {
             $user = $this->repo->login($email, $password);
             if ($user) {
-                session_start();
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
                 $_SESSION['user_id'] = $user->getId();
                 $_SESSION['user_nome'] = $user->getName();
                 $_SESSION['user_email'] = $user->getEmail();
+                // ---------------------------
+
                 http_response_code(200);
                 echo json_encode([
                     'status' => 'success',
@@ -74,125 +83,167 @@ class UserController
                 ]);
             } else {
                 http_response_code(401);
-                echo json_encode(['status' => 'invalid_credentials']);
+                echo json_encode(['status' => 'invalid_credentials', 'mensagem' => 'Email ou senha inválidos.']);
             }
-        } catch (\Throwable $e) {
+        } catch (PDOException $e) {
             http_response_code(500);
             error_log("Login failed: " . $e->getMessage());
-            echo json_encode(['status' => 'fail']);
+            echo json_encode(['status' => 'fail', 'mensagem' => 'Erro interno do servidor.']);
         }
+        exit;
     }
 
     public function handleUpdateNameRequest(): void
     {
+        header('Content-Type: application/json');
+
+        // 1. Start the session "locker"
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         if (!isset($_SESSION['user_id'])) {
             http_response_code(401);
-            echo json_encode(['status' => 'unauthorized']);
+            echo json_encode(['status' => 'unauthorized', 'mensagem' => 'Acesso não autorizado.']);
             exit;
         }
+
         $id = $_SESSION['user_id'];
-        header('Content-Type: application/json');
 
         $data = json_decode(file_get_contents("php://input"), true);
         $newName = $data['name'] ?? null;
 
         if (empty($newName)) {
             http_response_code(400);
-            echo json_encode(['status' => 'invalid_input']);
+            echo json_encode(['status' => 'invalid_input', 'mensagem' => 'O novo nome não pode estar vazio.']);
             exit;
         }
         try{
             $success = $this->repo->updateName($newName, $id);
 
             if ($success) {
-                $_SESSION['user_nome'] = $newName;
+                $_SESSION['user_nome'] = $newName; // 6. Update the "locker"
                 http_response_code(200);
-                echo json_encode(['status' => 'success']);
+                echo json_encode(['status' => 'success', 'mensagem' => 'Nome atualizado.']);
             } else {
                 http_response_code(500);
-                echo json_encode(['status' => 'fail']);
+                echo json_encode(['status' => 'fail', 'mensagem' => 'Falha ao atualizar o nome.']);
             }
         } catch (\Throwable $e) {
             http_response_code(500);
-            echo json_encode(['status' => 'fail']);
+            echo json_encode(['status' => 'fail', 'mensagem' => 'Erro interno do servidor.']);
         }
         exit;
     }
 
     public function handleUpdateEmailRequest(): void
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         if (!isset($_SESSION['user_id'])) {
             http_response_code(401);
-            echo json_encode(['status' => 'unauthorized']);
+            echo json_encode(['status' => 'unauthorized', 'mensagem' => 'Acesso não autorizado.']);
+            exit;
         }
+
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents("php://input"), true);
-        $email = $data['email'] ?? null;
-        $oldEmail = $_SESSION['email'] ?? null;
-        $password = $data['password'] ?? null;
+
+        $id = $_SESSION['user_id'];
+        $newEmail = $data['email'] ?? null;
+        $password = $data['password'] ?? null; // Password to confirm action
+
+        if (empty($newEmail) || empty($password)) {
+            http_response_code(400);
+            echo json_encode(['status' => 'invalid_input', 'mensagem' => 'Email e senha são obrigatórios.']);
+            exit;
+        }
 
         try {
-            $success = $this->repo->updateEmail($email, $password, $oldEmail);
+            $success = $this->repo->updateEmail($newEmail, $password, $id);
             if ($success) {
+                $_SESSION['user_email'] = $newEmail; // Update the session
                 http_response_code(200);
-                echo json_encode(['status' => 'success']);
+                echo json_encode(['status' => 'success', 'mensagem' => 'Email atualizado.']);
             } else {
-                http_response_code(500);
-                echo json_encode(['status' => 'fail']);
+                http_response_code(401); // Wrong password
+                echo json_encode(['status' => 'fail_password', 'mensagem' => 'Senha incorreta.']);
             }
         } catch (\Throwable $e) {
             http_response_code(500);
-            echo json_encode(['status' => 'fail']);
+            echo json_encode(['status' => 'fail', 'mensagem' => 'Erro interno do servidor.']);
         }
         exit;
     }
 
     public function handleUpdatePasswordRequest(): void
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         if (!isset($_SESSION['user_id'])) {
             http_response_code(401);
-            echo json_encode(['status' => 'unauthorized']);
+            echo json_encode(['status' => 'unauthorized', 'mensagem' => 'Acesso não autorizado.']);
+            exit;
         }
+
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents("php://input"), true);
+
         $id = $_SESSION['user_id'];
         $oldPassword = $data['oldPassword'] ?? null;
         $newPassword = $data['newPassword'] ?? null;
+
         if (empty($oldPassword) || empty($newPassword)) {
             http_response_code(400);
-            echo json_encode(['status' => 'invalid_input']);
+            echo json_encode(['status' => 'invalid_input', 'mensagem' => 'Senha antiga e nova são obrigatórias.']);
             exit;
         }
         try {
-            $success = $this->repo->updatePassword($id, $newPassword,$oldPassword);
+            $success = $this->repo->updatePassword($id, $newPassword, $oldPassword);
             if ($success) {
-                echo json_encode(['status' => 'success']);
+                http_response_code(200);
+                echo json_encode(['status' => 'success', 'mensagem' => 'Senha atualizada.']);
+            } else {
+                http_response_code(401); // Wrong old password
+                echo json_encode(['status' => 'fail_password', 'mensagem' => 'Senha antiga incorreta.']);
             }
         } catch (\Throwable $e) {
             http_response_code(500);
-            echo json_encode(['status' => 'fail']);
+            echo json_encode(['status' => 'fail', 'mensagem' => 'Erro interno do servidor.']);
         }
         exit;
     }
 
     public function handleDeleteRequest(): void
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         if (!isset($_SESSION['user_id'])) {
             http_response_code(401);
-            echo json_encode(['status' => 'unauthorized']);
+            echo json_encode(['status' => 'unauthorized', 'mensagem' => 'Acesso não autorizado.']);
+            exit;
         }
+
         header('Content-Type: application/json');
-        $data = json_decode(file_get_contents("php://input"), true);
         $id = $_SESSION['user_id'];
+
         try {
             $success = $this->repo->delete($id);
             if ($success) {
+                session_unset();
+                session_destroy();
                 http_response_code(200);
-                echo json_encode(['status' => 'success']);
+                echo json_encode(['status' => 'success', 'mensagem' => 'Conta deletada com sucesso.']);
+            } else {
+                http_response_code(404); // 404 Not Found
+                echo json_encode(['status' => 'fail', 'mensagem' => 'Usuário não encontrado.']);
             }
         } catch (\Throwable $e) {
             http_response_code(500);
-            echo json_encode(['status' => 'fail']);
+            echo json_encode(['status' => 'fail', 'mensagem' => 'Erro interno do servidor.']);
         }
         exit;
     }

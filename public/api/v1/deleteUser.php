@@ -16,4 +16,4 @@ $conn = $database->getConnection();
 
 $repo = new UserRepository($conn);
 $controller = new UserController($repo);
-$controller->handleUpdateNameRequest();
+$controller->handleDeleteRequest();
