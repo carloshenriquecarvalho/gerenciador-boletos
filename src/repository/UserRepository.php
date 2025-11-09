@@ -17,7 +17,7 @@ class UserRepository
     private const string SQL_SELECT_USER_FROM_TABLE = 'SELECT * FROM usuario WHERE email = :email';
     private const string SQL_SELECT_USER_FROM_TABLE_ID = 'SELECT * FROM usuario WHERE id_usuario = :id_usuario';
     private const string SQL_UPDATE_NAME = 'UPDATE usuario SET nome_usuario = :nome_usuario WHERE id_usuario = :id_usuario';
-    private const string SQL_UPDATE_EMAIL = 'UPDATE usuario SET email = :email WHERE email = :oldEmail';
+    private const string SQL_UPDATE_EMAIL = 'UPDATE usuario SET email = :email WHERE id_usuario = :id_usuario';
     private const string SQL_UPDATE_PASSWORD = 'UPDATE usuario SET senha_hash = :password_hash WHERE id_usuario = :id_usuario';
     private const string SQL_DELETE_USER_FROM_TABLE = 'DELETE FROM usuario WHERE id_usuario = :id_usuario';
 
@@ -82,16 +82,16 @@ class UserRepository
     }
 
     //update email
-    public function updateEmail(string $newEmail, string $password, string $oldEmail): bool
+    public function updateEmail(string $newEmail, string $password, int $id): bool
     {
-        $stmt = $this->conn->prepare(self::SQL_SELECT_USER_FROM_TABLE);
+        $stmt = $this->conn->prepare(self::SQL_SELECT_USER_FROM_TABLE_ID);
         try {
-            $stmt->execute([':email' => $oldEmail]);
+            $stmt->execute([':id_usuario' => $id]);
             $data = $stmt->fetch();
 
             if ($data && password_verify($password, $data['senha_hash'])) {
                 $stmt_update = $this->conn->prepare(self::SQL_UPDATE_EMAIL);
-                $stmt_update->execute([':email' => $newEmail, ':oldEmail' => $oldEmail]);
+                $stmt_update->execute([':email' => $newEmail, ':id_usuario' => $id]);
                 return true;
             }
             return false;
