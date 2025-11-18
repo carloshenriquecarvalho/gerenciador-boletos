@@ -13,13 +13,13 @@ class UserRepository
         $this->conn = $conn;
     }
 
-    private const string SQL_INSERT_USER_INTO_TABLE = 'INSERT INTO usuario (nome_usuario, email, senha_hash) VALUES (:name, :email, :password_hash)';
-    private const string SQL_SELECT_USER_FROM_TABLE = 'SELECT * FROM usuario WHERE email = :email';
-    private const string SQL_SELECT_USER_FROM_TABLE_ID = 'SELECT * FROM usuario WHERE id_usuario = :id_usuario';
-    private const string SQL_UPDATE_NAME = 'UPDATE usuario SET nome_usuario = :nome_usuario WHERE id_usuario = :id_usuario';
-    private const string SQL_UPDATE_EMAIL = 'UPDATE usuario SET email = :email WHERE id_usuario = :id_usuario';
-    private const string SQL_UPDATE_PASSWORD = 'UPDATE usuario SET senha_hash = :password_hash WHERE id_usuario = :id_usuario';
-    private const string SQL_DELETE_USER_FROM_TABLE = 'DELETE FROM usuario WHERE id_usuario = :id_usuario';
+    private const string SQL_INSERT_USER_INTO_TABLE = 'INSERT INTO gerenciador_boletos.usuario (nome_usuario, email, senha_hash) VALUES (:name, :email, :password_hash)';
+    private const string SQL_SELECT_USER_FROM_TABLE = 'SELECT * FROM gerenciador_boletos.usuario WHERE email = :email';
+    private const string SQL_SELECT_USER_FROM_TABLE_ID = 'SELECT * FROM gerenciador_boletos.usuario WHERE id_usuario = :id_usuario';
+    private const string SQL_UPDATE_NAME = 'UPDATE gerenciador_boletos.usuario SET nome_usuario = :nome_usuario WHERE id_usuario = :id_usuario';
+    private const string SQL_UPDATE_EMAIL = 'UPDATE gerenciador_boletos.usuario SET email = :email WHERE id_usuario = :id_usuario';
+    private const string SQL_UPDATE_PASSWORD = 'UPDATE gerenciador_boletos.usuario SET senha_hash = :password_hash WHERE id_usuario = :id_usuario';
+    private const string SQL_DELETE_USER_FROM_TABLE = 'DELETE FROM gerenciador_boletos.usuario WHERE id_usuario = :id_usuario';
 
     //register
     public function register(string $name, string $email, string $password): bool

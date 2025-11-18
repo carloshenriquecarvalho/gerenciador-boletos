@@ -5,7 +5,7 @@ namespace App\model;
 class User
 {
     private ?int $id;
-    private string $name;
+    public string $name;
     private string $email;
 
     public function __construct(?int $id, string $name, string $email){
@@ -18,12 +18,10 @@ class User
     {
         return $this->id;
     }
-
     public function getName(): string
     {
         return $this->name;
     }
-
     public function getEmail(): string
     {
         return $this->email;

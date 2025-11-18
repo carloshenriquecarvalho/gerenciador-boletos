@@ -1,7 +1,6 @@
 <?php
 namespace App\controller;
 use App\repository\UserRepository;
-use App\model\User;
 use PDOException;
 
 class UserController
@@ -20,7 +19,7 @@ class UserController
         $data = json_decode(file_get_contents("php://input"), true);
 
         if (!$data || empty($data['name']) || empty($data['email']) || empty($data['password'])) {
-            http_response_code(400); // 400 Bad Request
+            http_response_code(400);
             echo json_encode(['status' => 'failed', 'message' => 'invalid_input.']);
             exit;
         }
@@ -69,7 +68,7 @@ class UserController
                     session_start();
                 }
                 $_SESSION['user_id'] = $user->getId();
-                $_SESSION['user_nome'] = $user->getName();
+                $_SESSION['user_nome'] = $user->name;
                 $_SESSION['user_email'] = $user->getEmail();
                 // ---------------------------
 
@@ -98,7 +97,6 @@ class UserController
     {
         header('Content-Type: application/json');
 
-        // 1. Start the session "locker"
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -130,7 +128,7 @@ class UserController
                 http_response_code(500);
                 echo json_encode(['status' => 'fail', 'message' => 'Failed to update name.']);
             }
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             http_response_code(500);
             echo json_encode(['status' => 'fail', 'message' => 'Internal Server Error.']);
         }
@@ -171,7 +169,7 @@ class UserController
                 http_response_code(401); // Wrong password
                 echo json_encode(['status' => 'fail_password', 'message' => 'Wrong Password.']);
             }
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             http_response_code(500);
             echo json_encode(['status' => 'fail', 'message' => 'Internal Server Error.']);
         }
@@ -210,7 +208,7 @@ class UserController
                 http_response_code(401);
                 echo json_encode(['status' => 'fail_password', 'message' => 'Senha antiga incorreta.']);
             }
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             http_response_code(500);
             echo json_encode(['status' => 'fail', 'message' => 'Internal server error.']);
         }
@@ -242,7 +240,7 @@ class UserController
                 http_response_code(404);
                 echo json_encode(['status' => 'fail', 'message' => 'User Not Found.']);
             }
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             http_response_code(500);
             echo json_encode(['status' => 'fail', 'message' => 'Internal server error.']);
         }
